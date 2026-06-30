@@ -12,7 +12,9 @@ spl_autoload_register(function ($class) {
 
 // Enrutamiento
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$path = str_replace('/Parcial2_DSVII', '', $path);
+$path = preg_replace('#^/Parcial2_DSVII#', '', $path);
+$path = preg_replace('#^/public#', '', $path);
+$path = preg_replace('#^/index\.php#', '', $path);
 $path = $path ?: '/';
 
 $controller = new App\Controllers\InscriptorController();
