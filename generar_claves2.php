@@ -29,19 +29,19 @@ function generateRSAKeys($bits = 2048) {
 }
 
 // Generar claves
-echo "🔐 Generando claves RSA de 2048 bits...\n\n";
+echo "Generando claves RSA de 2048 bits...\n\n";
 
 $keys = generateRSAKeys(2048);
 
 if (!$keys) {
-    die("❌ Error: " . openssl_error_string());
+    die(" Error: " . openssl_error_string());
 }
 
 // Guardar archivos
 file_put_contents(__DIR__ . '/private_key.pem', $keys['private']);
 file_put_contents(__DIR__ . '/public_key.pem', $keys['public']);
 
-echo "✅ Clave privada: private_key.pem\n";
-echo "✅ Clave pública: public_key.pem\n";
-echo "\n✅ ¡Listo!\n";
+echo " Clave privada: private_key.pem\n";
+echo "Clave pública: public_key.pem\n";
+echo "\n ¡Listo!\n";
 ?>

@@ -7,9 +7,9 @@ SET time_zone = "+00:00";
 CREATE DATABASE IF NOT EXISTS parcial_itech CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE parcial_itech;
 
--- --------------------------------------------------------
+
 -- Tabla de países
--- --------------------------------------------------------
+
 DROP TABLE IF EXISTS paises;
 CREATE TABLE IF NOT EXISTS paises (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -17,9 +17,8 @@ CREATE TABLE IF NOT EXISTS paises (
     UNIQUE KEY uk_paises_nombre (nombre)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
 -- Tabla de áreas de interés
--- --------------------------------------------------------
+
 DROP TABLE IF EXISTS areas_interes;
 CREATE TABLE IF NOT EXISTS areas_interes (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -27,9 +26,9 @@ CREATE TABLE IF NOT EXISTS areas_interes (
     UNIQUE KEY uk_areas_interes_nombre (nombre)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+
 -- Tabla de inscriptores
--- --------------------------------------------------------
+
 DROP TABLE IF EXISTS inscriptores;
 CREATE TABLE IF NOT EXISTS inscriptores (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -51,9 +50,9 @@ CREATE TABLE IF NOT EXISTS inscriptores (
         ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+
 -- Tabla intermedia de temas tecnológicos
--- --------------------------------------------------------
+
 DROP TABLE IF EXISTS inscriptor_temas;
 CREATE TABLE IF NOT EXISTS inscriptor_temas (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -68,9 +67,9 @@ CREATE TABLE IF NOT EXISTS inscriptor_temas (
         ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+
 -- Datos de ejemplo
--- --------------------------------------------------------
+
 INSERT INTO paises (nombre) VALUES
 ('Panamá'),
 ('Colombia'),
@@ -106,4 +105,21 @@ INSERT INTO inscriptor_temas (inscriptor_id, area_interes_id) VALUES
 (2, 10),
 (3, 3);
 
-COMMIT;
+USE parcial_itech;
+
+-- 1) El enunciado pide que TODAS las llaves foráneas usen
+--    ON DELETE RESTRICT ON UPDATE CASCADE. La FK de inscriptor_temas
+--    hacia inscriptores estaba en CASCADE; se corrige a RESTRICT.
+ALTER TABLE inscriptor_temas
+    DROP FOREIGN KEY fk_inscriptor_temas_inscriptores;
+
+ALTER TABLE inscriptor_temas
+    ADD CONSTRAINT fk_inscriptor_temas_inscriptores
+    FOREIGN KEY (inscriptor_id) REFERENCES inscriptores(id)
+    ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- 2) Restricción a nivel de BD para el celular (formato de 8 dígitos),
+--    para reforzar el punto de "Restricciones Necesarias a nivel de BD"
+--    en el campo de teléfono.
+ALTER TABLE inscriptores
+    ADD CONSTRAINT chk_inscriptores_celular CHECK (celular REGEXP '^[0-9]{7,8}$');
