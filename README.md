@@ -180,12 +180,20 @@ Todas las llaves foráneas usan `ON DELETE RESTRICT ON UPDATE CASCADE`.
 
 **Formulario de Inscripción**
 Formulario moderno y responsivo con todos los campos necesarios.
-![Formulario de inscripción] ![alt text](Formulario-1.png)
+![alt text](image-3-1.png)
 
 **Reporte de Participantes**
 Reporte con estadísticas, auditoría de integridad y botón de exportación.
-![Reporte de participantes] ![alt text](image-1.png)
 
+El sistema verifica la firma digital de cada inscrito y lo marca visualmente según su estado de integridad:
+
+- 🟢 **Íntegro** — los datos del registro coinciden exactamente con el hash y la firma digital generados al momento de la inscripción. No han sido alterados.
+
+ ![alt text](image-1.png)
+
+- 🔴 **Corrompido** — el hash recalculado no coincide con la firma guardada, lo que indica que los datos fueron modificados directamente en la base de datos (por fuera del sistema) después de la inscripción, o que fueron firmados con una llave distinta a la actual.
+![alt text](image-2.png)
+  
 ---
 
 ## Autora
