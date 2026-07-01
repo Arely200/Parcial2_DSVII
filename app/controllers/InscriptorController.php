@@ -8,9 +8,6 @@ use App\Config\Database;
 
 class InscriptorController {
 
-   
-    // CARGAR PAÍSES (usando la clase de Conexión, no una nueva)
-  
     private function cargarPaises() {
         try {
             return Database::getInstance()->fetchAll(
@@ -22,9 +19,6 @@ class InscriptorController {
         }
     }
 
-
-    // CARGAR TEMAS (usando la clase de Conexión, no una nueva)
- 
     private function cargarTemas() {
         try {
             return Database::getInstance()->fetchAll(
@@ -36,22 +30,16 @@ class InscriptorController {
         }
     }
 
-   
-    // MÉTODO INDEX
     public function index() {
         $paises = $this->cargarPaises();
         $temas = $this->cargarTemas();
         include __DIR__ . '/../views/formulario.php';
     }
 
-   
-    // MÉTODO GUARDAR
-   
     public function guardar() {
         $errors = [];
         $data = [];
 
-        // Sanitización
         $data['identidad'] = Sanitizer::sanitizeIdentidad($_POST['identidad'] ?? '');
         $data['nombre'] = Sanitizer::sanitizeNombre($_POST['nombre'] ?? '');
         $data['apellido'] = Sanitizer::sanitizeNombre($_POST['apellido'] ?? '');
@@ -64,7 +52,6 @@ class InscriptorController {
         $data['observaciones'] = Sanitizer::sanitizeObservaciones($_POST['observaciones'] ?? '');
         $temasSeleccionados = Sanitizer::sanitizeTemas($_POST['temas'] ?? []);
 
-        // Validaciones
         if (!Validator::validateRequired($data['nombre'])) {
             $errors['nombre'] = 'El nombre es obligatorio';
         }
@@ -93,7 +80,6 @@ class InscriptorController {
             $errors['temas'] = 'Seleccione al menos un tema';
         }
 
-        // Si hay errores, volver al formulario
         if (!empty($errors)) {
             $paises = $this->cargarPaises();
             $temas = $this->cargarTemas();
@@ -102,7 +88,6 @@ class InscriptorController {
             return;
         }
 
-        // Guardar (el hash + firma digital se generan dentro del modelo)
         $result = (new Inscriptor())->guardar($data, $temasSeleccionados);
         if ($result['success']) {
             header('Location: /Parcial2_DSVII/reporte');
@@ -111,8 +96,6 @@ class InscriptorController {
         }
         exit();
     }
-
-    // MÉTODO REPORTE
 
     public function reporte() {
         try {
@@ -124,9 +107,6 @@ class InscriptorController {
         }
         include __DIR__ . '/../views/reporte.php';
     }
-
-   
-    // MÉTODO EXPORTAR EXCEL
 
     public function exportarExcel() {
         try {

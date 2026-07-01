@@ -1,0 +1,7 @@
+HOME            = .
+RANDFILE        = $ENV::HOME/.rnd
+
+[ v3_ca ]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints       = critical, CA:true

@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 use App\Config\Database;
+use App\Utils\Firmador;
 
 class Inscriptor {
     private $db;
@@ -12,18 +13,26 @@ class Inscriptor {
         try {
             $conn = $this->db->getConnection();
             $conn->beginTransaction();
-            
+
+            // Auditoría de integridad: hash SHA-256 + firma digital OpenSSL
+            // sobre los campos sensibles (nombre, apellido, identidad, correo,
+            // celular, sexo), para poder detectar después si fueron alterados.
+            $hash = Firmador::generarHash($data);
+            $firma = Firmador::firmar($hash);
+
             $inscriptorData = [
                 'identidad' => $data['identidad'],
                 'nombre' => $data['nombre'],
                 'apellido' => $data['apellido'],
                 'edad' => $data['edad'],
                 'sexo' => $data['sexo'],
-                'pais_residencia_id' => $data['pais_id'], // ← Campo correcto
+                'pais_residencia_id' => $data['pais_id'],
                 'nacionalidad' => $data['nacionalidad'],
                 'correo' => $data['correo'],
                 'celular' => $data['celular'],
-                'observaciones' => $data['observaciones'] ?? null
+                'observaciones' => $data['observaciones'] ?? null,
+                'hash_integridad' => $hash,
+                'firma_digital' => $firma,
             ];
             
             $inscriptorId = $this->db->insert('inscriptores', $inscriptorData);
@@ -31,7 +40,7 @@ class Inscriptor {
             foreach ($temas as $temaId) {
                 $this->db->insert('inscriptor_temas', [
                     'inscriptor_id' => $inscriptorId, 
-                    'area_interes_id' => $temaId  // ← Campo correcto
+                    'area_interes_id' => $temaId
                 ]);
             }
             
