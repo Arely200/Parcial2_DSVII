@@ -180,11 +180,11 @@ Todas las llaves foráneas usan `ON DELETE RESTRICT ON UPDATE CASCADE`.
 
 **Formulario de Inscripción**
 Formulario moderno y responsivo con todos los campos necesarios.
-![alt text](Formulario.png)(app/Imagenes/Formulario.png)
+![Formulario de inscripción] ![alt text](Formulario-1.png)
 
 **Reporte de Participantes**
 Reporte con estadísticas, auditoría de integridad y botón de exportación.
-![alt text](Reporte-2.png)(Reporte.png)
+![Reporte de participantes] ![alt text](image-1.png)
 
 ---
 
