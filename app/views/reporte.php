@@ -186,18 +186,8 @@
             background: #f0fdf4 !important;
         }
         
-        .integro td:first-child::before {
-            content: " ";
-            font-size: 14px;
-        }
-        
         .corrompido {
             background: #fef2f2 !important;
-        }
-        
-        .corrompido td:first-child::before {
-            content: " ";
-            font-size: 14px;
         }
         
         .badge {
@@ -319,17 +309,14 @@
             </div>
         <?php else: ?>
             
-            <!-- ESTADÍSTICAS -->
+            <!-- ESTADÍSTICAS (usando la verificación REAL con OpenSSL) -->
             <?php 
                 $total = count($inscriptores);
                 $integridadCompleta = 0;
-                $camposRequeridos = ['nombre', 'apellido', 'identidad', 'correo', 'celular', 'sexo'];
                 foreach ($inscriptores as $row) {
-                    $ok = true;
-                    foreach ($camposRequeridos as $c) {
-                        if (empty($row[$c]) || strlen(trim($row[$c])) < 2) { $ok = false; break; }
+                    if (\App\Utils\Firmador::esIntegro($row)) {
+                        $integridadCompleta++;
                     }
-                    if ($ok) $integridadCompleta++;
                 }
                 $porcentaje = $total > 0 ? round(($integridadCompleta / $total) * 100) : 0;
             ?>
@@ -376,28 +363,13 @@
                     <tbody>
                         <?php 
                         $contador = 0;
-                        $nombresCampos = [
-                            'nombre' => 'Nombre',
-                            'apellido' => 'Apellido',
-                            'identidad' => 'Identidad',
-                            'correo' => 'Correo',
-                            'celular' => 'Celular',
-                            'sexo' => 'Sexo'
-                        ];
                         foreach ($inscriptores as $row):
                             $contador++;
-                            $camposFaltantes = [];
-                            $esIntegro = true;
-                            foreach ($camposRequeridos as $campo) {
-                                if (empty($row[$campo]) || strlen(trim($row[$campo])) < 2) {
-                                    $esIntegro = false;
-                                    $camposFaltantes[] = $nombresCampos[$campo];
-                                }
-                            }
+                            $esIntegro = \App\Utils\Firmador::esIntegro($row);
                             $claseFila = $esIntegro ? 'integro' : 'corrompido';
                             $badge = $esIntegro 
                                 ? '<span class="badge badge-success"> Íntegro</span>' 
-                                : '<span class="badge badge-danger"> ' . implode(', ', $camposFaltantes) . '</span>';
+                                : '<span class="badge badge-danger"> Corrompido</span>';
                         
                             $sexoMostrar = '-';
                             if (($row['sexo'] ?? '') === 'Masculino') $sexoMostrar = 'Masculino';
@@ -429,7 +401,7 @@
         <!-- FOOTER -->
         <div class="footer">
             <p>
-                <i class="fas fa-copyright"></i> 2025 iTECH. Todos los derechos reservados.
+                <i class="fas fa-copyright"></i> <?= date('Y') ?> iTECH. Todos los derechos reservados.
                 &nbsp;|&nbsp; <i class="fas fa-envelope"></i> info@itech.com
                 &nbsp;|&nbsp; <i class="fas fa-phone"></i> +507 1234-5678
             </p>

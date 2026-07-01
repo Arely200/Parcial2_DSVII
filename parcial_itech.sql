@@ -123,3 +123,11 @@ ALTER TABLE inscriptor_temas
 --    en el campo de teléfono.
 ALTER TABLE inscriptores
     ADD CONSTRAINT chk_inscriptores_celular CHECK (celular REGEXP '^[0-9]{7,8}$');
+
+USE parcial_itech;
+
+ALTER TABLE inscriptores
+    ADD COLUMN hash_integridad VARCHAR(64) NULL AFTER observaciones,
+    ADD COLUMN firma_digital   TEXT NULL AFTER hash_integridad;
+
+INSERT IGNORE INTO areas_interes (nombre) VALUES ('Python');

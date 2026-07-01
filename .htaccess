@@ -1,3 +1,5 @@
+Options -MultiViews
+
 RewriteEngine On
 RewriteBase /Parcial2_DSVII/
 
